@@ -2,6 +2,7 @@ import requests
 from datetime import datetime
 import smtplib
 import config
+import time
 
 MY_LAT = -29.6604  # Your latitude
 MY_LONG = -51.0562  # Your longitude
@@ -38,10 +39,8 @@ def is_dark():
     sunrise = int(data["results"]["sunrise"].split("T")[1].split(":")[0])
     sunset = int(data["results"]["sunset"].split("T")[1].split(":")[0])
 
-    print(f"{sunrise} {sunset}")
     current_hour = datetime.now().hour
-    print(current_hour)
-    # current_hour = 20
+    print(f"Current hour: {current_hour} | Sunrise: {sunrise} | Sunset: {sunset}")
 
     if sunrise <= current_hour <= sunset:
         return False  # It's daytime
@@ -59,13 +58,13 @@ def send_email():
     connection.close()
 
 
-print(is_iss_near())
-print(is_dark())
-
 # If the iss is close to my current position
 # ,and it is currently dark
 # Then email me to tell me to look up.
 # BONUS: run the code every 60 seconds.
-
-if is_iss_near() and is_dark():
-    send_email()
+while True:
+    print(f"ISS is near? {is_iss_near()}")
+    print(f"Is Nighttime? {is_dark()}")
+    time.sleep(60)
+    if is_iss_near() and is_dark():
+        send_email()
